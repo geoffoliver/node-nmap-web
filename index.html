@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portscanner!</title>
+  <script type="text/javascript">
+    async function doIt() {
+      const display = document.getElementById('results');
+
+      const params = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          host: document.getElementById('host').value,
+        })
+      };
+
+      display.innerHTML = 'Loading...';
+
+      try {
+        const results = await fetch('/scan', params);
+
+        const data = await results.json();
+
+        if (!results.ok) {
+          throw new Error(data.error || `Sorry, that didn't work out.`);
+        }
+
+        display.innerHTML = JSON.stringify(data, null, 2);
+      } catch (ex) {
+        console.log(ex);
+        alert(ex.message);
+        display.innerHTML = 'Waiting';
+      }
+    }
+  </script>
+</head>
+<body>
+  <input type="text" name="host" id="host" placeholder="Host" />
+  <button type="button" onClick="doIt()">
+    Lookup
+  </button>
+  <pre id="results">Waiting</pre>
+</body>
+</html>
